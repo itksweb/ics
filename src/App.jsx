@@ -12,7 +12,7 @@ function App() {
   useEffect(() => {
     const fetchfromDb = async () => {
       try {
-        const res = await fetch("../data.json");
+        const res = await fetch("data.json");
         const db = await res.json();
         // console.log("REST", db.currentUser);
         // localStorage.setItem("currentUser", JSON.stringify(db.currentUser));
