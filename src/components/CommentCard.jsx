@@ -7,6 +7,7 @@ import { useFocus } from "../assets/utils";
 import { formatTime } from "../assets/utils";
 import { useSelector, useDispatch } from "react-redux";
 import { editComment, changeScore } from "../store/generalSlice";
+import Modal from "./Modal";
 
 const Feedback = ({ data, index, parentIndex }) => {
   const [mode, setMode] = useState("");
@@ -114,6 +115,7 @@ const Feedback = ({ data, index, parentIndex }) => {
           setMode={setMode}
         />
       ) : null}
+      {mode === "delete" && <Modal />}
     </>
   );
 };
