@@ -33,6 +33,7 @@ function App() {
       ? fetchFromLocal()
       : fetchfromDb();
   }, []);
+  // useEffect(() => console.log(comments), [comments]);
 
   return (
     <div className=" flex flex-col gap-4 py-4 bg-grey100 h-full max-w-3xl px-5">

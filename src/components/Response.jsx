@@ -4,8 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { addComment, replyComment } from "../store/generalSlice";
 import { useFocus } from "../assets/utils";
 
-
-const Response = ({ mode, replyingTo, index, setMode }) => {
+const Response = ({ mode, replyingTo, parentIndex, index, setMode }) => {
   const [input, setInput] = useState("");
   const [inputRef, setInputRef] = useFocus();
   const dispatch = useDispatch();
@@ -13,7 +12,6 @@ const Response = ({ mode, replyingTo, index, setMode }) => {
 
   useEffect(() => {
     if (mode === "reply") {
-      console.log(`${replyingTo.length}`);
       setInput(`@${replyingTo} `);
       setInputRef();
     }
@@ -23,13 +21,16 @@ const Response = ({ mode, replyingTo, index, setMode }) => {
     if (input.trim()) {
       if (!mode) {
         dispatch(addComment(input));
+        setInput("");
       }
       if (mode === "reply") {
         let text = input;
         if (input.startsWith(`@${replyingTo}`)) {
           text = input.slice(replyingTo.length + 1).trim();
         }
-        dispatch(replyComment({ index, text, replyingTo }));
+        if (text) {
+          dispatch(replyComment({ index, parentIndex, text, replyingTo }));
+        }
         setMode("");
       }
     }

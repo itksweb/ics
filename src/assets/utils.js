@@ -1,6 +1,5 @@
 import { useRef, useCallback } from "react";
 
-
 export const getPath = (id) => {
   const editPath =
     "M13.479 2.872 11.08.474a1.75 1.75 0 0 0-2.327-.06L.879 8.287a1.75 1.75 0 0 0-.5 1.06l-.375 3.648a.875.875 0 0 0 .875.954h.078l3.65-.333c.399-.04.773-.216 1.058-.499l7.875-7.875a1.68 1.68 0 0 0-.061-2.371Zm-2.975 2.923L8.159 3.449 9.865 1.7l2.389 2.39-1.75 1.706Z";
@@ -34,10 +33,9 @@ export const getRandomNumberExcluding = (min, max, exclude) => {
     randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
   } while (exclude.includes(randomNumber));
   return randomNumber;
-}
+};
 
 export const formatTime = (time) => {
-  
   if (typeof time === "number") {
     const diff = Date.now() - time;
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -45,22 +43,21 @@ export const formatTime = (time) => {
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((diff % (1000 * 60)) / 1000);
     if (days >= 1) {
-      return days + ` day${days > 1 && "s"} ago`;
+      return days + ` day${days > 1 ? "s":""} ago`;
     }
     if (hours >= 1) {
-      return hours + ` hour${hours > 1 && "s"} ago`;
+      return hours + ` hour${hours > 1 ? "s":""} ago`;
     }
     if (minutes >= 1) {
-      return minutes + ` minute${minutes > 1 && "s"} ago`;
+      return minutes + ` minute${minutes > 1 ? "s":""} ago`;
     }
     if (seconds >= 1) {
-      return seconds + ` second${seconds > 1 && "s"} ago`;
+      return seconds + ` second${seconds > 1 ? "s":""} ago`;
     }
   } else if (typeof time === "string") {
-    return time
+    return time;
   }
-  
-  
+
   // console.log(
   //   `${days} days, ${hours} hours ${minutes} minutes, ${seconds} seconds`
   // );
@@ -76,7 +73,5 @@ export const useFocus = () => {
     }
   }, []);
   return [ref, setFocus];
-}
-
-
-
+};
+export const deproxify = (x) => JSON.parse(JSON.stringify(x));

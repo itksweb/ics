@@ -1,7 +1,8 @@
+import { useEffect } from "react";
 import { getPath } from "../assets/utils";
 
 const ActionIcon = ({ id }) => {
-  const path = getPath(id)
+  const path = getPath(id);
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -13,7 +14,8 @@ const ActionIcon = ({ id }) => {
 };
 
 export const ActionButton = ({ setMode, id, mode }) => {
-  const actionText = (str) => str[0].toUpperCase() + str.slice(1); 
+  
+  const actionText = (str) => str[0].toUpperCase() + str.slice(1);
   return (
     <button
       type="button"
@@ -33,7 +35,11 @@ export const ActionButton = ({ setMode, id, mode }) => {
   );
 };
 
-export const SubmitButton = ({ mode, handleUpdateComment, handleAddComment }) => {
+export const SubmitButton = ({
+  mode,
+  handleUpdateComment,
+  handleAddComment,
+}) => {
   const handleButtonSubmit = (e) => {
     e.preventDefault();
     if (mode === "edit") {
@@ -63,5 +69,3 @@ export const SubmitButton = ({ mode, handleUpdateComment, handleAddComment }) =>
     </button>
   );
 };
-
-// export default ActionButton;

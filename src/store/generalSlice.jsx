@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getRandomNumberExcluding } from "../assets/utils";
+import { getRandomNumberExcluding, deproxify } from "../assets/utils";
 
 const genSlice = createSlice({
   name: "gen",
@@ -15,66 +15,42 @@ const genSlice = createSlice({
       state.currentUser = action.payload;
     },
     editComment(state, action) {
-      const { index, text } = action.payload;
-      let parentIndex = action.payload.parentIndex;
-      let workData = [];
-      if (parentIndex) {
-        workData = state.comments.filter((item, i) => i !== parentIndex);
-        let workItem = { ...state.comments[parentIndex] };
-        let workingData = [...workItem.replies].filter(
-          (item, i) => i !== index
-        );
-        let repl = { ...workItem.replies[index] };
-        repl.content = text;
-        workingData.splice(index, 0, repl);
-        workItem = { ...workItem, replies: [...workingData] };
-        workData.splice(parentIndex, 0, workItem);
-        state.comments = [...workData];
-      } else {
-        workData = state.comments.filter((item, i) => i !== index);
-        let workItem = { ...state.comments[index] };
-        workItem.content = text;
-        workData.splice(index, 0, workItem);
-        state.comments = [...workData];
-      }
+      const { index, text, parentIndex } = action.payload;
+      let commentsCopy = [...state.comments];
+      Number.isInteger(parentIndex)
+        ? (commentsCopy[parentIndex].replies[index].content = text)
+        : (commentsCopy[index].content = text);
+      state.comments = [...commentsCopy];
     },
-    changeScore(state, action){
-      const { index, sign } = action.payload;
-      let parentIndex = action.payload.parentIndex;
-      let workData = [];
-      if (parentIndex) {
-        workData = state.comments.filter((item, i) => i !== parentIndex);
-        let workItem = state.comments[parentIndex];
-        let workingData = [...workItem.replies].filter(
-          (item, i) => i !== index
-        );
-        let repl = { ...workItem.replies[index] };
-        repl.score = sign === "plus" ? (repl.score += 1) : (repl.score -= 1);
-        workingData.splice(index, 0, repl);
-        workItem = { ...workItem, replies: [...workingData] };
-        workData.splice(parentIndex, 0, workItem);
-        state.comments = [...workData];
-        // dispatch(setComments([...workData]));
+    changeScore(state, action) {
+      const { index, parentIndex, sign } = action.payload;
+      let commentsCopy = [...state.comments];
+      if (Number.isInteger(parentIndex)) {
+        if (sign === "plus") {
+          commentsCopy[parentIndex].replies[index].score += 1;
+        } else if (sign === "minus") {
+          commentsCopy[parentIndex].replies[index].score -= 1;
+        }
       } else {
-        workData = state.comments.filter((item, i) => i !== index);
-        let workItem = { ...state.comments[index] };
-        workItem.score = sign === "plus" ? (workItem.score += 1) : (workItem.score -= 1);
-        workData.splice(index, 0, workItem);
-        state.comments = [...workData];
-        // dispatch(setComments([...workData]));
+        console.log("parant", parentIndex);
+        if (sign === "plus") {
+          commentsCopy[index].score += 1;
+        } else if (sign === "minus") {
+          commentsCopy[index].score -= 1;
+        }
       }
+      state.comments = [...commentsCopy];
     },
     deleteComment(state, action) {
-      const { id, username } = action.payload;
+      const { index, parentIndex, username } = action.payload;
+      let commentsCopy = [...state.comments];
+
       if (state.currentUser.username === username) {
-        const hasConfirmed = confirm(
-          "Are you sure you want to delete this comment?"
-        );
-        if (hasConfirmed) {
-          const newComments = state.comments.filter((item) => id !== item.id);
-          // localStorage.setItem("comments", JSON.stringify(newComments));
-          state.comments = [...newComments];
-        }
+        const newComments = Number.isInteger(parentIndex)
+          ? commentsCopy[parentIndex].replies.filter((item, i) => i !== index)
+          : commentsCopy.filter((item, i) => i !== index);
+        // localStorage.setItem("comments", JSON.stringify(newComments));
+        state.comments = [...newComments];
       }
     },
     addComment(state, action) {
@@ -94,17 +70,20 @@ const genSlice = createSlice({
           username: state.currentUser.username,
         },
       };
-      // console.log(newComment)
-      state.comments = [...state.comments, newComment];
+      state.comments = [...state.comments, { ...newComment }];
       // localStorage.setItem(
       //   "comments",
       //   JSON.stringify([...comments, newComment])
       // );
     },
     replyComment(state, action) {
-      const { index, text, replyingTo } = action.payload;
-      let workData = [];
-
+      const { index, parentIndex, text, replyingTo } = action.payload;
+      let ind = index;
+      if (Number.isInteger(parentIndex)) {
+        ind = parentIndex;
+      }
+      console.log("received index: ", ind);
+      let commentsCopy = [...state.comments];
       const currentIds = state.comments.map((item) => item.id);
       const id = getRandomNumberExcluding(1, 20, currentIds);
       const newReply = {
@@ -121,11 +100,9 @@ const genSlice = createSlice({
           username: state.currentUser.username,
         },
       };
-      workData = state.comments.filter((item, i) => i !== index);
-      let workItem = { ...state.comments[index] };
-      workItem.replies = [...workItem.replies, { ...newReply }];
-      workData.splice(index, 0, workItem);
-      state.comments = [...workData];
+      commentsCopy[ind].replies.push({ ...newReply });
+      console.log(deproxify(commentsCopy));
+      state.comments = [...commentsCopy];
     },
   },
 });
@@ -137,6 +114,6 @@ export const {
   addComment,
   deleteComment,
   replyComment,
-  changeScore
+  changeScore,
 } = genSlice.actions;
 export default genSlice.reducer;

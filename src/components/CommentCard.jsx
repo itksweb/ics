@@ -6,33 +6,26 @@ import { ActionButton, SubmitButton } from "./Buttons";
 import { useFocus } from "../assets/utils";
 import { formatTime } from "../assets/utils";
 import { useSelector, useDispatch } from "react-redux";
-import { editComment, changeScore } from "../store/generalSlice";
+import { editComment, changeScore, deleteComment } from "../store/generalSlice";
 import Modal from "./Modal";
 
 const Feedback = ({ data, index, parentIndex }) => {
   const [mode, setMode] = useState("");
-  const [editInput, setEditInput] = useState("");
   const [inputRef, setInputRef] = useFocus();
   const dispatch = useDispatch();
 
-  const {currentUser } = useSelector((state) => state.gen);
+  const { currentUser } = useSelector((state) => state.gen);
   const you = currentUser.username === data.user.username;
-
-  useEffect(() => {
-    if (mode === "edit") {
-      setEditInput(data.content);
-      setInputRef();
-    }
-  }, [mode]);
 
   const updateScore = (sign) => {
     dispatch(changeScore({ sign, parentIndex, index }));
   };
-  const handleUpdateComment = () => {
-    if (you && editInput.trim()) {
-      dispatch(editComment({ index, text: editInput, parentIndex }));
-      setMode("");
-    }
+
+  const handleDelete = () => {
+    dispatch(
+      deleteComment({ index, parentIndex, username: data.user.username })
+    );
+    setMode("")
   };
 
   const ActionButtons = ({ cls }) => {
@@ -48,8 +41,76 @@ const Feedback = ({ data, index, parentIndex }) => {
   const MobileBottom = () => {
     return (
       <div className="flex justify-between items-center mt-3 sm:hidden">
-        <VoteScore score={data.score} cls="grid-cols-3" />
+        <VoteScore
+          score={data.score}
+          cls="grid-cols-3"
+          changeScore={updateScore}
+        />
         <ActionButtons />
+      </div>
+    );
+  };
+  const EditScreen = () => {
+    const [editInput, setEditInput] = useState("");
+
+    useEffect(() => {
+      setEditInput(data.content);
+      setInputRef();
+      console.log("Parent index", parentIndex);
+      console.log("Index", index);
+    }, []);
+
+    const handleUpdateComment = () => {
+      console.log(parentIndex);
+      if (you && editInput.trim()) {
+        dispatch(editComment({ index, text: editInput, parentIndex }));
+        setMode("");
+      }
+    };
+
+    return (
+      <>
+        <textarea
+          value={editInput}
+          onChange={(e) => setEditInput(e.target.value)}
+          placeholder="Add a comment"
+          rows={4}
+          className="w-full px-3 py-1.5 cursor-pointer"
+          ref={inputRef}
+        />
+        <div className="flex justify-end">
+          <SubmitButton mode={mode} handleUpdateComment={handleUpdateComment} />
+        </div>
+      </>
+    );
+  };
+
+  const DeleteScreen = () => {
+    return (
+      <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-[rgba(0,0,0,0.5)]">
+        <div className=" bg-white p-7 rounded-lg relative text-grey800 w-[400px] flex flex-col gap-5 ">
+          <h1 className="text-2xl font-semibold">Delete comment</h1>
+          <p className="">
+            Are you sure you want to delete this comment? This will remove the
+            comment and it can't be undone.
+          </p>
+          <div className="flex justify-between items-center">
+            <button
+              className="rounded-xl text-white bg-grey800 p-4 w-[45%] cursor-pointer"
+              type="button"
+              onClick={() => setMode("")}
+            >
+              NO, CANCEL
+            </button>
+            <button
+              className="rounded-xl text-white bg-pink400 p-4 w-[45%] cursor-pointer"
+              type="button"
+              onClick={() => handleDelete()}
+            >
+              YES, DELETE
+            </button>
+          </div>
+        </div>
       </div>
     );
   };
@@ -61,6 +122,8 @@ const Feedback = ({ data, index, parentIndex }) => {
           score={data.score}
           cls="max-sm:hidden"
           changeScore={updateScore}
+          index={index}
+          parentIndex={parentIndex}
         />
         <div className="right w-full">
           <div className="top flex justify-between items-center mb-3">
@@ -87,22 +150,7 @@ const Feedback = ({ data, index, parentIndex }) => {
               {data.content}
             </div>
           ) : (
-            <>
-              <textarea
-                value={editInput}
-                onChange={(e) => setEditInput(e.target.value)}
-                placeholder="Add a comment"
-                rows={4}
-                className="w-full px-3 py-1.5 cursor-pointer"
-                ref={inputRef}
-              />
-              <div className="flex justify-end">
-                <SubmitButton
-                  mode={mode}
-                  handleUpdateComment={handleUpdateComment}
-                />
-              </div>
-            </>
+            <EditScreen />
           )}
           <MobileBottom />
         </div>
@@ -111,11 +159,12 @@ const Feedback = ({ data, index, parentIndex }) => {
         <Response
           mode={mode}
           replyingTo={data.user.username}
-          index={parentIndex ? parentIndex : index}
+          index={index}
+          parentIndex={parentIndex}
           setMode={setMode}
         />
       ) : null}
-      {mode === "delete" && <Modal />}
+      {mode === "delete" ? <DeleteScreen /> : null}
     </>
   );
 };

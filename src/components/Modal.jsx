@@ -1,18 +1,10 @@
-import "./Modal.css";
-
-const Modal = ({ isOpen, onClose, children }) => {
-//   if (!isOpen) return null;
+const Modal = ({ children }) => {
+  // if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-container">
-        <button className="modal-close" onClick={onClose}>
-          hey
-        </button>
-        {children}
-      </div>
+    <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-[rgba(0,0,0,0.5)]">
+      <div className=" bg-white p-5 rounded-md relative ">{children}</div>
     </div>
   );
 };
-
 export default Modal;
