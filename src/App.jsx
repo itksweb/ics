@@ -3,6 +3,7 @@ import CommentCard from "./components/CommentCard";
 import Response from "./components/Response";
 import { useSelector, useDispatch } from "react-redux";
 import { setComments, setCurrentUser } from "./store/generalSlice";
+import { sortedArray } from "./assets/utils";
 
 function App() {
   const dispatch = useDispatch();
@@ -33,14 +34,13 @@ function App() {
       ? fetchFromLocal()
       : fetchfromDb();
   }, []);
-  // useEffect(() => console.log(comments), [comments]);
 
   return (
     <div className=" flex flex-col gap-4 py-4 bg-grey100 h-full max-w-3xl px-5">
       {comments.length && (
         <div className="flex flex-col gap-4 pb-5 ">
           {" "}
-          {comments.map((comment, i) => (
+          {sortedArray([...comments]).map((comment, i) => (
             <CommentCard key={comment.id} comment={comment} index={i} />
           ))}{" "}
         </div>

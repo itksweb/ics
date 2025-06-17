@@ -75,3 +75,16 @@ export const useFocus = () => {
   return [ref, setFocus];
 };
 export const deproxify = (x) => JSON.parse(JSON.stringify(x));
+
+export const sortedArray = (gh) => {
+  gh.sort((a, b) => {
+    if (a.score < b.score) {
+      return 1;
+    }
+    if (a.score > b.score) {
+      return -1;
+    }
+    return 0;
+  });
+  return gh
+}

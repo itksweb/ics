@@ -32,7 +32,6 @@ const genSlice = createSlice({
           commentsCopy[parentIndex].replies[index].score -= 1;
         }
       } else {
-        console.log("parant", parentIndex);
         if (sign === "plus") {
           commentsCopy[index].score += 1;
         } else if (sign === "minus") {
@@ -44,13 +43,17 @@ const genSlice = createSlice({
     deleteComment(state, action) {
       const { index, parentIndex, username } = action.payload;
       let commentsCopy = [...state.comments];
-
       if (state.currentUser.username === username) {
-        const newComments = Number.isInteger(parentIndex)
-          ? commentsCopy[parentIndex].replies.filter((item, i) => i !== index)
-          : commentsCopy.filter((item, i) => i !== index);
+        if (Number.isInteger(parentIndex)) {
+          const newReplies = commentsCopy[parentIndex].replies.filter(
+            (item, i) => i !== index
+          );
+          commentsCopy[parentIndex].replies = [...newReplies];
+        } else {
+          commentsCopy = commentsCopy.filter((item, i) => i !== index);
+        }
+        state.comments = [...commentsCopy];
         // localStorage.setItem("comments", JSON.stringify(newComments));
-        state.comments = [...newComments];
       }
     },
     addComment(state, action) {
