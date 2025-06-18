@@ -52,7 +52,7 @@ const Response = ({ mode, replyingTo, parentIndex, index, setMode }) => {
         onChange={(e) => setInput(e.target.value)}
         placeholder="Add a comment"
         rows={3}
-        className="w-full px-3 py-1.5 cursor-pointer"
+        className="w-full px-4 py-2 border appearance-none border-grey100 rounded-lg cursor-pointer outline-0 focus:ring-0 focus:border-grey500"
         ref={inputRef}
       />
       <div className="flex justify-between items-center max-sm:w-full">

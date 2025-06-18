@@ -7,7 +7,6 @@ import { useFocus } from "../assets/utils";
 import { formatTime } from "../assets/utils";
 import { useSelector, useDispatch } from "react-redux";
 import { editComment, changeScore, deleteComment } from "../store/generalSlice";
-import Modal from "./Modal";
 
 const Feedback = ({ data, index, parentIndex }) => {
   const [mode, setMode] = useState("");
@@ -56,8 +55,7 @@ const Feedback = ({ data, index, parentIndex }) => {
     useEffect(() => {
       setEditInput(data.content);
       setInputRef();
-      console.log("Parent index", parentIndex);
-      console.log("Index", index);
+
     }, []);
 
     const handleUpdateComment = () => {
@@ -75,7 +73,7 @@ const Feedback = ({ data, index, parentIndex }) => {
           onChange={(e) => setEditInput(e.target.value)}
           placeholder="Add a comment"
           rows={4}
-          className="w-full px-3 py-1.5 cursor-pointer"
+          className="w-full px-3 py-1.5 cursor-pointer border border-grey100 outline-0 focus:ring-0 focus:border-grey500 rounded-lg"
           ref={inputRef}
         />
         <div className="flex justify-end">
@@ -117,7 +115,7 @@ const Feedback = ({ data, index, parentIndex }) => {
 
   return (
     <>
-      <div className=" flex gap-5 items-start p-5 bg-white max-sm:text-sm text-grey500 rounded-md">
+      <div className=" flex gap-5 items-start p-5 bg-white text-grey500 rounded-md">
         <VoteScore
           score={data.score}
           cls="max-sm:hidden"
@@ -182,7 +180,7 @@ const CommentCard = ({ comment, index }) => {
     <>
       <Comment comment={comment} index={index} />
       {comment.replies.length ? (
-        <div className="sm:ml-10 border-l-2 flex flex-col gap-4 pl-4 sm:pl-10">
+        <div className="sm:ml-10 border-l-2 border-l-grey100 flex flex-col gap-4 pl-4 sm:pl-10">
           {comment.replies.map((rep, i) => (
             <Reply rep={rep} key={rep.id} index={i} parentIndex={index} />
           ))}

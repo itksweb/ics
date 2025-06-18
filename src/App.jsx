@@ -36,7 +36,7 @@ function App() {
   }, []);
 
   return (
-    <div className=" flex flex-col gap-4 py-4 bg-grey100 h-full max-w-3xl px-5">
+    <div className=" flex flex-col gap-4 py-4 bg-grey50 h-full max-w-3xl px-5">
       {comments.length && (
         <div className="flex flex-col gap-4 pb-5 ">
           {" "}
