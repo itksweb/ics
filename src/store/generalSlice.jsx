@@ -21,6 +21,7 @@ const genSlice = createSlice({
         ? (commentsCopy[parentIndex].replies[index].content = text)
         : (commentsCopy[index].content = text);
       state.comments = [...commentsCopy];
+      localStorage.setItem("comments", JSON.stringify([...commentsCopy]));
     },
     changeScore(state, action) {
       const { index, parentIndex, sign } = action.payload;
@@ -39,6 +40,7 @@ const genSlice = createSlice({
         }
       }
       state.comments = [...commentsCopy];
+      localStorage.setItem("comments", JSON.stringify([...commentsCopy]));
     },
     deleteComment(state, action) {
       const { index, parentIndex, username } = action.payload;
@@ -53,11 +55,11 @@ const genSlice = createSlice({
           commentsCopy = commentsCopy.filter((item, i) => i !== index);
         }
         state.comments = [...commentsCopy];
-        // localStorage.setItem("comments", JSON.stringify(newComments));
+        localStorage.setItem("comments", JSON.stringify([...commentsCopy]));
       }
     },
     addComment(state, action) {
-      const currentIds = state.comments.map((item) => item.id);
+      const currentIds = [...state.comments].map((item) => item.id);
       const id = getRandomNumberExcluding(1, 20, currentIds);
       const newComment = {
         id,
@@ -73,11 +75,11 @@ const genSlice = createSlice({
           username: state.currentUser.username,
         },
       };
+      localStorage.setItem(
+        "comments",
+        JSON.stringify([...state.comments, { ...newComment }])
+      );
       state.comments = [...state.comments, { ...newComment }];
-      // localStorage.setItem(
-      //   "comments",
-      //   JSON.stringify([...comments, newComment])
-      // );
     },
     replyComment(state, action) {
       const { index, parentIndex, text, replyingTo } = action.payload;
@@ -85,7 +87,6 @@ const genSlice = createSlice({
       if (Number.isInteger(parentIndex)) {
         ind = parentIndex;
       }
-      console.log("received index: ", ind);
       let commentsCopy = [...state.comments];
       const currentIds = state.comments.map((item) => item.id);
       const id = getRandomNumberExcluding(1, 20, currentIds);
@@ -104,7 +105,7 @@ const genSlice = createSlice({
         },
       };
       commentsCopy[ind].replies.push({ ...newReply });
-      console.log(deproxify(commentsCopy));
+      localStorage.setItem("comments", JSON.stringify([...commentsCopy]));
       state.comments = [...commentsCopy];
     },
   },

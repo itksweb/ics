@@ -59,7 +59,6 @@ const Feedback = ({ data, index, parentIndex }) => {
     }, []);
 
     const handleUpdateComment = () => {
-      console.log(parentIndex);
       if (you && editInput.trim()) {
         dispatch(editComment({ index, text: editInput, parentIndex }));
         setMode("");

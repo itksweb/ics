@@ -7,7 +7,6 @@ import { sortedArray } from "./assets/utils";
 
 function App() {
   const dispatch = useDispatch();
-
   const { comments, currentUser } = useSelector((state) => state.gen);
 
   useEffect(() => {
@@ -16,8 +15,8 @@ function App() {
         const res = await fetch("data.json");
         const db = await res.json();
         // console.log("REST", db.currentUser);
-        // localStorage.setItem("currentUser", JSON.stringify(db.currentUser));
-        // localStorage.setItem("comments", JSON.stringify(db.comments));
+        localStorage.setItem("currentUser", JSON.stringify(db.currentUser));
+        localStorage.setItem("comments", JSON.stringify(db.comments));
         if (!currentUser.username) dispatch(setCurrentUser(db.currentUser));
         if (!comments.length) dispatch(setComments(db.comments));
         console.log("from db");
@@ -26,8 +25,16 @@ function App() {
       }
     };
     const fetchFromLocal = () => {
-      dispatch(setComments(JSON.parse(localStorage.getItem("comments"))));
-      dispatch(setCurrentUser(JSON.parse(localStorage.getItem("currentUser"))));
+      if (localStorage.getItem("currentUser")) {
+        dispatch(
+          setCurrentUser(JSON.parse(localStorage.getItem("currentUser")))
+        );
+      }
+      if (localStorage.getItem("comments")) {
+        dispatch(setComments(JSON.parse(localStorage.getItem("comments"))));
+      }
+      
+      
       console.log("from local");
     };
     localStorage.getItem("currentUser") && localStorage.getItem("comments")
